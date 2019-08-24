@@ -18,7 +18,10 @@ ActiveRecord::Schema.define(version: 2019_07_29_210822) do
   create_table "plants", force: :cascade do |t|
     t.string "name"
     t.date "start_date"
-    t.integer "screenshot_reminder"
+    t.integer "picture_reminder"
+    t.integer "water_reminder"
+    t.boolean "public"
+    t.boolean "needs_processing"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

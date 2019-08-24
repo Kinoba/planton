@@ -2,15 +2,18 @@ module Api
   module V1
     # Plants controller
     class PlantsController < ApplicationController
-      before_action :authenticate_user!
+      before_action :authenticate_user!, except: :index
+      before_action :find_plant, only: [:show, :update, :destroy]
 
       def index
-        @plants = Plant.all
+        @plants = Plant.where(public: true)
 
         render json: @plants
       end
 
-      def show; end
+      def show
+        render json: @plant
+      end
 
       def new; end
 
@@ -18,21 +21,33 @@ module Api
 
       def create
         plant = Plant.new(plant_params)
-        if plant.save
-          render json: plant
-        else
-          render json: plant.errors
-        end
+        plant.save!
+
+        render json: plant
       end
 
-      def update; end
+      def update
+        @plant.update!(plant_params)
 
-      def destroy; end
+        render json: @plant
+      end
+
+      def destroy
+        @plant.destroy!
+
+        head :no_content
+      end
 
       private
 
       def plant_params
-        params.require(:plant).permit(:name, :start_date, :screenshot_reminder, :user_id)
+        params.require(:plant).permit(
+          :name, :start_date, :picture_reminder, :water_reminder, :needs_processing, :public, :user_id
+        )
+      end
+
+      def find_plant
+        @plant = Plant.find_by!(id: params[:id])
       end
     end
   end
