@@ -18,5 +18,7 @@
 class Plant < ApplicationRecord
   belongs_to :user
 
+  has_many_attached :pictures
+
   validates :name, :public, :start_date, :picture_reminder, presence: true
 end

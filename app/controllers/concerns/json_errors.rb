@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
+# Single point of entry for the errors
 module JSONErrors
   extend ActiveSupport::Concern
 
+  # rubocop:disable Metrics/BlockLength
   included do
     rescue_from StandardError,                      with: :render_500
     rescue_from ActiveRecord::RecordNotFound,       with: :render_404 # Mongoid::Errors::DocumentNotFound
@@ -27,12 +31,14 @@ module JSONErrors
     end
 
     def render_errors(errors, status = 400)
+      Rails.logger.fatal(errors.backtrace.join("\n")) if errors.try(:backtrace)
+
       data = {
         status: 'failed',
         errors: Array.wrap(errors)
       }
 
-      render json: data , status: status
+      render json: data, status: status
     end
 
     def render_object_errors(obj, status = 400)
@@ -45,4 +51,5 @@ module JSONErrors
       end
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

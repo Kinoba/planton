@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     # Plants controller
     class PlantsController < ApplicationController
-      before_action :authenticate_user!, except: :index
+      # before_action :authenticate_user!, except: :index
       before_action :find_plant, only: [:show, :update, :destroy]
 
       def index
-        @plants = Plant.where(public: true)
+        @plants = Plant.where(public: true).with_attached_images
 
         render json: @plants
       end
@@ -35,6 +37,12 @@ module Api
       def destroy
         @plant.destroy!
 
+        head :no_content
+      end
+
+      def generate_gifs
+        GifGeneratorJob.perform_later
+        
         head :no_content
       end
 

@@ -32,6 +32,25 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
+## How are the gifs generated
+
+Gifs are generated with an ActiveJob.
+
+First we generate a color palette for the final gif to be beautiful, then we generate a mp4 file and finally we convert the mp4 file to a gif.
+
+```
+# Generate palette
+ffmpeg -f image2 -i "PATH_TO_IMAGES-%d" -vf scale=900:-1:sws_dither=ed,palettegen "COLOR_PALETTE.png"
+
+# Generate the movie file
+ffmpeg -f image2 -framerate 1.2 -i "PATH_TO_IMAGES-%d" MOVIE_FILE_NAME.mp4
+
+# Generate gif
+ffmpeg -i "MOVIE_FILE_NAME.mp4" -i "COLOR_PALETTE.png" -filter_complex "fps=1.2,scale=500:-1:flags=lanczos[x];[x][1:v]paletteuse" "GIF_FILE_NAME.gif"
+```
+
+The temporary mp4 file is deleted afterwards.
+
 ## Running the tests
 
 Explain how to run the automated tests for this system

@@ -4,7 +4,14 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users
-      resources :plants
+      
+      namespace :plants do
+        get :generate_gifs, to: :plants#generate_gif
+      end
+      
+      resources :plants do
+        resources :pictures, only: :create
+      end
     end
   end
 end
