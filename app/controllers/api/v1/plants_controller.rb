@@ -8,9 +8,9 @@ module Api
       before_action :find_plant, only: [:show, :update, :destroy]
 
       def index
-        @plants = Plant.where(public: true).with_attached_images
-
-        render json: @plants
+        @plants = Plant.where(public: true).with_attached_pictures
+        
+        render json: PlantSerializer.new(@plants).serialized_json
       end
 
       def show
@@ -42,7 +42,7 @@ module Api
 
       def generate_gifs
         GifGeneratorJob.perform_later
-        
+
         head :no_content
       end
 
